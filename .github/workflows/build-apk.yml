@@ -28,31 +28,40 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build debug APK
+      - name: Apply improved game UI and easier bot
+        shell: bash
+        run: |
+          cat > /tmp/gameview.b64 <<'GAMEVIEW'
+          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
+          GAMEVIEW
+          sed 's/^          //' /tmp/gameview.b64 | base64 -d | gzip -d > app/src/main/java/com/ossi/laneforge/GameView.java
+          sed -i "s/versionName '0.1.0'/versionName '0.2.0'/" app/build.gradle
+
+      - name: Build improved debug APK
         run: gradle :app:assembleDebug --stacktrace
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk LaneForge-v0.1-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk LaneForge-v0.2-improved.apk
 
       - name: Upload APK artifact
         id: upload_apk
         uses: actions/upload-artifact@v4
         with:
-          name: LaneForge-APK
-          path: LaneForge-v0.1-debug.apk
+          name: LaneForge-Improved-APK
+          path: LaneForge-v0.2-improved.apk
           if-no-files-found: error
 
       - name: Publish direct APK download
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view laneforge-v0.1 >/dev/null 2>&1; then
-            gh release upload laneforge-v0.1 LaneForge-v0.1-debug.apk --clobber
+          if gh release view laneforge-v0.2 >/dev/null 2>&1; then
+            gh release upload laneforge-v0.2 LaneForge-v0.2-improved.apk --clobber
           else
-            gh release create laneforge-v0.1 LaneForge-v0.1-debug.apk \
+            gh release create laneforge-v0.2 LaneForge-v0.2-improved.apk \
               --target "${GITHUB_SHA}" \
-              --title "LaneForge v0.1" \
-              --notes "Offline Android prototype against bots."
+              --title "LaneForge v0.2 Improved" \
+              --notes "Improved arena UI, recognizable card icons and an easier offline bot."
           fi
 
       - name: Store APK and artifact reference
@@ -60,15 +69,15 @@ jobs:
           ARTIFACT_ID: ${{ steps.upload_apk.outputs.artifact-id }}
         run: |
           mkdir -p dist
-          cp LaneForge-v0.1-debug.apk dist/LaneForge-v0.1-debug.apk
-          printf '{"run_id":%s,"artifact_id":%s,"artifact_name":"LaneForge-APK"}\n' \
+          cp LaneForge-v0.2-improved.apk dist/LaneForge-v0.2-improved.apk
+          printf '{"run_id":%s,"artifact_id":%s,"artifact_name":"LaneForge-Improved-APK"}\n' \
             "${GITHUB_RUN_ID}" "${ARTIFACT_ID}" > dist/build-info.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/LaneForge-v0.1-debug.apk dist/build-info.json
+          git add dist/LaneForge-v0.2-improved.apk dist/build-info.json
           if git diff --cached --quiet; then
             echo "Build files unchanged"
           else
-            git commit -m "Update direct LaneForge APK [skip ci]"
+            git commit -m "Update improved LaneForge APK [skip ci]"
             git push
           fi
