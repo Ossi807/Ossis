@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +32,22 @@ jobs:
       - name: Rename APK
         run: cp app/build/outputs/apk/debug/app-debug.apk LaneForge-v0.1-debug.apk
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: LaneForge-APK
           path: LaneForge-v0.1-debug.apk
           if-no-files-found: error
+
+      - name: Publish direct APK download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view laneforge-v0.1 >/dev/null 2>&1; then
+            gh release upload laneforge-v0.1 LaneForge-v0.1-debug.apk --clobber
+          else
+            gh release create laneforge-v0.1 LaneForge-v0.1-debug.apk \
+              --target "${GITHUB_SHA}" \
+              --title "LaneForge v0.1" \
+              --notes "Offline Android prototype against bots."
+          fi
