@@ -3,6 +3,8 @@ name: Build LaneForge APK
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'dist/**'
   workflow_dispatch:
 
 permissions:
@@ -50,4 +52,18 @@ jobs:
               --target "${GITHUB_SHA}" \
               --title "LaneForge v0.1" \
               --notes "Offline Android prototype against bots."
+          fi
+
+      - name: Store APK in repository
+        run: |
+          mkdir -p dist
+          cp LaneForge-v0.1-debug.apk dist/LaneForge-v0.1-debug.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/LaneForge-v0.1-debug.apk
+          if git diff --cached --quiet; then
+            echo "APK unchanged"
+          else
+            git commit -m "Update direct LaneForge APK [skip ci]"
+            git push
           fi
