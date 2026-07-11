@@ -35,6 +35,7 @@ jobs:
         run: cp app/build/outputs/apk/debug/app-debug.apk LaneForge-v0.1-debug.apk
 
       - name: Upload APK artifact
+        id: upload_apk
         uses: actions/upload-artifact@v4
         with:
           name: LaneForge-APK
@@ -54,15 +55,19 @@ jobs:
               --notes "Offline Android prototype against bots."
           fi
 
-      - name: Store APK in repository
+      - name: Store APK and artifact reference
+        env:
+          ARTIFACT_ID: ${{ steps.upload_apk.outputs.artifact-id }}
         run: |
           mkdir -p dist
           cp LaneForge-v0.1-debug.apk dist/LaneForge-v0.1-debug.apk
+          printf '{"run_id":%s,"artifact_id":%s,"artifact_name":"LaneForge-APK"}\n' \
+            "${GITHUB_RUN_ID}" "${ARTIFACT_ID}" > dist/build-info.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/LaneForge-v0.1-debug.apk
+          git add dist/LaneForge-v0.1-debug.apk dist/build-info.json
           if git diff --cached --quiet; then
-            echo "APK unchanged"
+            echo "Build files unchanged"
           else
             git commit -m "Update direct LaneForge APK [skip ci]"
             git push
